@@ -20,6 +20,9 @@ export default function HomePage() {
       <Link href="/week-6"className="bg-blue-400 mb-3 text-white font-bold py-2 px-4 rounded hover:bg-blue-800 transition duration-300  ">
           Check my week 6 project !!!
       </Link>
+      <Link href="/week-7"className="bg-blue-400 mb-3 text-white font-bold py-2 px-4 rounded hover:bg-blue-800 transition duration-300  ">
+          Check my week 7 project !!!
+      </Link>
     </main>
   );
 }

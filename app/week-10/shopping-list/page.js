@@ -2,33 +2,41 @@
 import { useState, useEffect } from "react";
 import ItemList from "./item-list";
 import NewItem from "./new-item";
-import itemsData from "./items.json";
 import MealIdeas from "./meal-ideas";
 import { useUserAuth } from "../_utils/auth-context";
+import { getItems, addItem } from "../_services/shopping-list-service";
 
 const Page = () => {
-  const { user } = useUserAuth(); 
-  const [items, setItems] = useState(itemsData);
+  const { user } = useUserAuth();
+  const [items, setItems] = useState([]);
   const [selectedItemName, setSelectedItemName] = useState("");
 
   useEffect(() => {
-    if (!user) {
-      console.log("User not logged in. Redirecting to login page...");
-    }
-  }, [user]);
+    // Load items from Firebase
+    const loadItems = async () => {
+      if (user) {
+        const itemsFromService = await getItems(user.uid);
+        setItems(itemsFromService);
+      }
+    };
+    loadItems();
+  }, [user]); // Depend on user to reload items when user changes
 
-  const handleAddItem = (newItem) => {
-    setItems((currentItems) => [...currentItems, newItem]);
+  const handleAddItem = async (item) => {
+    if (user) {
+      const id = await addItem(user.uid, item); // Add item to Firebase
+      setItems((currentItems) => [...currentItems, { ...item, id }]); // Add new item with id to state
+    }
   };
 
   const handleItemSelect = (item) => {
     const cleanedName = item.name
-      .split(",")[0] 
+      .split(",")[0]
       .replace(
         /([\u2700-\u27BF]|[\uE000-\uF8FF]|�[�-�]|�[�-�]|[\u2011-\u26FF]|�[�-�])/g,
         ""
-      ) 
-      .trim(); 
+      )
+      .trim();
     setSelectedItemName(cleanedName);
   };
 
